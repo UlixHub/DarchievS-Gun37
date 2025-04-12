@@ -122,15 +122,6 @@ namespace Tanks
             ""id"": ""b3c22d62-0435-4b4e-a0d8-2dc662aece1e"",
             ""actions"": [
                 {
-                    ""name"": ""Fire"",
-                    ""type"": ""Button"",
-                    ""id"": ""7a902f23-70b0-49c7-8f90-e24f9a7ccaa1"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
                     ""name"": ""Focus"",
                     ""type"": ""Value"",
                     ""id"": ""8f5cde93-4a07-4c76-bb79-dd606ee73631"",
@@ -138,20 +129,18 @@ namespace Tanks
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Fire"",
+                    ""type"": ""Button"",
+                    ""id"": ""904590d0-5a20-4031-80c7-ea8f148c1318"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
-                {
-                    ""name"": """",
-                    ""id"": ""9f1174bd-1fd9-4923-a7ae-34310549b395"",
-                    ""path"": ""<Keyboard>/e"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Fire"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
                 {
                     ""name"": """",
                     ""id"": ""e35cbf4b-d630-460f-9b0a-42210d89ce52"",
@@ -160,6 +149,17 @@ namespace Tanks
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Focus"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""e28b0ec6-2291-4671-a07a-700e84ed3531"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Fire"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -174,8 +174,8 @@ namespace Tanks
             m_Tank_Movement = m_Tank.FindAction("Movement", throwIfNotFound: true);
             // Turret
             m_Turret = asset.FindActionMap("Turret", throwIfNotFound: true);
-            m_Turret_Fire = m_Turret.FindAction("Fire", throwIfNotFound: true);
             m_Turret_Focus = m_Turret.FindAction("Focus", throwIfNotFound: true);
+            m_Turret_Fire = m_Turret.FindAction("Fire", throwIfNotFound: true);
         }
 
         public void Dispose()
@@ -291,14 +291,14 @@ namespace Tanks
         // Turret
         private readonly InputActionMap m_Turret;
         private List<ITurretActions> m_TurretActionsCallbackInterfaces = new List<ITurretActions>();
-        private readonly InputAction m_Turret_Fire;
         private readonly InputAction m_Turret_Focus;
+        private readonly InputAction m_Turret_Fire;
         public struct TurretActions
         {
             private @TankControls m_Wrapper;
             public TurretActions(@TankControls wrapper) { m_Wrapper = wrapper; }
-            public InputAction @Fire => m_Wrapper.m_Turret_Fire;
             public InputAction @Focus => m_Wrapper.m_Turret_Focus;
+            public InputAction @Fire => m_Wrapper.m_Turret_Fire;
             public InputActionMap Get() { return m_Wrapper.m_Turret; }
             public void Enable() { Get().Enable(); }
             public void Disable() { Get().Disable(); }
@@ -308,22 +308,22 @@ namespace Tanks
             {
                 if (instance == null || m_Wrapper.m_TurretActionsCallbackInterfaces.Contains(instance)) return;
                 m_Wrapper.m_TurretActionsCallbackInterfaces.Add(instance);
-                @Fire.started += instance.OnFire;
-                @Fire.performed += instance.OnFire;
-                @Fire.canceled += instance.OnFire;
                 @Focus.started += instance.OnFocus;
                 @Focus.performed += instance.OnFocus;
                 @Focus.canceled += instance.OnFocus;
+                @Fire.started += instance.OnFire;
+                @Fire.performed += instance.OnFire;
+                @Fire.canceled += instance.OnFire;
             }
 
             private void UnregisterCallbacks(ITurretActions instance)
             {
-                @Fire.started -= instance.OnFire;
-                @Fire.performed -= instance.OnFire;
-                @Fire.canceled -= instance.OnFire;
                 @Focus.started -= instance.OnFocus;
                 @Focus.performed -= instance.OnFocus;
                 @Focus.canceled -= instance.OnFocus;
+                @Fire.started -= instance.OnFire;
+                @Fire.performed -= instance.OnFire;
+                @Fire.canceled -= instance.OnFire;
             }
 
             public void RemoveCallbacks(ITurretActions instance)
@@ -348,8 +348,8 @@ namespace Tanks
         }
         public interface ITurretActions
         {
-            void OnFire(InputAction.CallbackContext context);
             void OnFocus(InputAction.CallbackContext context);
+            void OnFire(InputAction.CallbackContext context);
         }
     }
 }
